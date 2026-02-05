@@ -1,10 +1,20 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 
 export default function ServicesSection() {
   const [selectedService, setSelectedService] = useState('LIVE')
+  const descriptionRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (descriptionRef.current) {
+      descriptionRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      })
+    }
+  }, [selectedService])
 
   const splitServiceName = (name: string) => {
     if (name.includes(' ')) {
@@ -68,7 +78,7 @@ export default function ServicesSection() {
             <h3 className="text-lg md:text-2xl font-bold text-gray-700 mb-6 md:mb-8 drop-shadow-sm">Services:</h3>
             
             {/* Services Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
               {services.map((service, index) => (
                 <div
                   key={index}
@@ -85,7 +95,7 @@ export default function ServicesSection() {
                     />
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span className="text-white text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold uppercase text-center px-1 md:px-2 leading-tight transform group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-white text-xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold uppercase text-center px-1 md:px-2 leading-tight transform group-hover:scale-110 transition-transform duration-300">
                       {splitServiceName(service.name).map((word, i) => (
                         <span key={i} className="block">{word}</span>
                       ))}
@@ -97,25 +107,27 @@ export default function ServicesSection() {
           </div>
 
           {/* Right Column - Highlighted Service Detail */}
-          <div className="flex flex-col md:flex-row lg:col-span-1 mt-8 md:mt-0">
+          <div ref={descriptionRef} className="flex flex-col md:flex-row lg:col-span-1 mt-8 md:mt-0 min-h-[300px]">
             {/* Vertical Separator */}
-            <div className="hidden md:block w-1 bg-red-800 mr-8"></div>
+            <div className="hidden md:block w-1 bg-red-800 mr-8 h-full min-h-[300px]"></div>
             <div className="md:hidden w-full h-1 bg-red-800 mb-6"></div>
             
             {/* Content */}
-            <div className="flex-1">
+            <div className="flex-1 flex flex-col">
               <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-red-600 mb-4 md:mb-6 uppercase">{selectedServiceData.name}</h2>
-              {selectedServiceData.description ? (
-                <p className="text-gray-700 text-sm md:text-base leading-relaxed">
-                  {selectedServiceData.description}
-                </p>
-              ) : (
-                <p className="text-gray-700 text-sm md:text-base leading-relaxed">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor 
-                  incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
-                  exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-              )}
+              <div className="overflow-y-auto max-h-[400px] pr-2">
+                {selectedServiceData.description ? (
+                  <p className="text-gray-700 text-sm md:text-base lg:text-lg leading-relaxed">
+                    {selectedServiceData.description}
+                  </p>
+                ) : (
+                  <p className="text-gray-700 text-sm md:text-base lg:text-lg leading-relaxed">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor 
+                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
+                    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
