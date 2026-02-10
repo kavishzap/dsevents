@@ -120,7 +120,6 @@ export default function AboutPage() {
                           height: 400,
                           animations: {
                             enabled: true,
-                            easing: 'easeinout',
                             speed: 1500,
                             animateGradually: {
                               enabled: true,
@@ -251,7 +250,6 @@ export default function AboutPage() {
                           height: 400,
                           animations: {
                             enabled: true,
-                            easing: 'easeinout',
                             speed: 1500,
                             animateGradually: {
                               enabled: true,
@@ -392,7 +390,6 @@ export default function AboutPage() {
                           height: 400,
                           animations: {
                             enabled: true,
-                            easing: 'easeinout',
                             speed: 1500,
                             animateGradually: {
                               enabled: true,
