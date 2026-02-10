@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -9,17 +10,27 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [scrollY, setScrollY] = useState(0)
   const navRef = useRef<HTMLElement>(null)
+  const pathname = usePathname()
 
   useEffect(() => {
+    // Check if we're on a non-hero page (like /services)
+    const isNonHeroPage = pathname !== '/'
+    if (isNonHeroPage) {
+      setIsScrolled(true) // Always show background on non-hero pages
+    }
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY
       setScrollY(currentScrollY)
-      setIsScrolled(currentScrollY > 50)
+      // Only update scroll state on home page
+      if (pathname === '/') {
+        setIsScrolled(currentScrollY > 50)
+      }
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [pathname])
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -72,23 +83,47 @@ export default function Navbar() {
 
         {/* Desktop Navigation Links */}
         <div className="hidden md:flex items-center gap-4 lg:gap-6 xl:gap-8">
-          <Link href="/" className="px-4 py-2 border border-white rounded-full text-white font-normal hover:bg-white/10 transition-colors text-sm lg:text-base">
+          <Link href="/" className={`px-4 py-2 font-normal hover:bg-white/10 transition-colors text-sm lg:text-base ${
+            pathname === '/' ? 'border border-white rounded-full text-white' : 'text-white'
+          }`}>
             Home
           </Link>
-          <Link href="/services" className="text-white font-normal hover:text-gray-300 transition-colors text-sm lg:text-base">
+          <Link href="/services" className={`px-4 py-2 font-normal hover:bg-white/10 transition-colors text-sm lg:text-base ${
+            pathname === '/services' ? 'border border-white rounded-full text-white' : 'text-white'
+          }`}>
             Services
           </Link>
-          <Link href="/concerts" className="text-white font-normal hover:text-gray-300 transition-colors text-sm lg:text-base">
+          <Link href="/concerts" className={`px-4 py-2 font-normal hover:bg-white/10 transition-colors text-sm lg:text-base ${
+            pathname === '/concerts' ? 'border border-white rounded-full text-white' : 'text-white'
+          }`}>
             Concerts
           </Link>
-          <Link href="/about" className="text-white font-normal hover:text-gray-300 transition-colors text-sm lg:text-base">
+          <Link href="/about" className={`px-4 py-2 font-normal hover:bg-white/10 transition-colors text-sm lg:text-base ${
+            pathname === '/about' ? 'border border-white rounded-full text-white' : 'text-white'
+          }`}>
             About us
           </Link>
-          <Link href="/contacts" className="text-white font-normal hover:text-gray-300 transition-colors text-sm lg:text-base">
+          <Link 
+            href="/#contacts" 
+            onClick={(e) => {
+              if (pathname === '/') {
+                // Already on homepage, prevent default and scroll
+                e.preventDefault()
+                const element = document.getElementById('contacts')
+                if (element) {
+                  const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
+                  const offsetPosition = elementPosition - 100 // 100px offset from top
+                  window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                  })
+                }
+              }
+              // If not on homepage, let Link handle navigation to /#contacts
+            }}
+            className="text-white font-normal hover:text-gray-300 transition-colors text-sm lg:text-base cursor-pointer"
+          >
             Contacts
-          </Link>
-          <Link href="/login" className="text-white font-normal hover:text-gray-300 transition-colors text-sm lg:text-base">
-            Log In
           </Link>
         </div>
         
@@ -125,44 +160,63 @@ export default function Navbar() {
             <Link 
               href="/" 
               onClick={closeMobileMenu}
-              className="px-4 py-3 mb-2 border border-white rounded-full text-white font-normal hover:bg-white/10 transition-colors text-base text-center"
+              className={`px-4 py-3 mb-2 border border-white rounded-full font-normal hover:bg-white/10 transition-colors text-base text-center ${
+                pathname === '/' ? 'bg-white/20 text-white' : 'text-white'
+              }`}
             >
               Home
             </Link>
             <Link 
               href="/services" 
               onClick={closeMobileMenu}
-              className="px-4 py-3 mb-2 text-white font-normal hover:bg-white/10 transition-colors text-base text-center rounded-lg"
+              className={`px-4 py-3 mb-2 font-normal hover:bg-white/10 transition-colors text-base text-center rounded-lg ${
+                pathname === '/services' ? 'bg-white/20 text-white font-semibold' : 'text-white'
+              }`}
             >
               Services
             </Link>
             <Link 
               href="/concerts" 
               onClick={closeMobileMenu}
-              className="px-4 py-3 mb-2 text-white font-normal hover:bg-white/10 transition-colors text-base text-center rounded-lg"
+              className={`px-4 py-3 mb-2 font-normal hover:bg-white/10 transition-colors text-base text-center rounded-lg ${
+                pathname === '/concerts' ? 'bg-white/20 text-white font-semibold' : 'text-white'
+              }`}
             >
               Concerts
             </Link>
             <Link 
               href="/about" 
               onClick={closeMobileMenu}
-              className="px-4 py-3 mb-2 text-white font-normal hover:bg-white/10 transition-colors text-base text-center rounded-lg"
+              className={`px-4 py-3 mb-2 font-normal hover:bg-white/10 transition-colors text-base text-center rounded-lg ${
+                pathname === '/about' ? 'bg-white/20 text-white font-semibold' : 'text-white'
+              }`}
             >
               About us
             </Link>
             <Link 
-              href="/contacts" 
-              onClick={closeMobileMenu}
-              className="px-4 py-3 mb-2 text-white font-normal hover:bg-white/10 transition-colors text-base text-center rounded-lg"
+              href="/#contacts" 
+              onClick={(e) => {
+                closeMobileMenu()
+                if (pathname === '/') {
+                  // Already on homepage, prevent default and scroll
+                  e.preventDefault()
+                  const element = document.getElementById('contacts')
+                  if (element) {
+                    setTimeout(() => {
+                      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
+                      const offsetPosition = elementPosition - 100 // 100px offset from top
+                      window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                      })
+                    }, 300)
+                  }
+                }
+                // If not on homepage, let Link handle navigation to /#contacts
+              }}
+              className="px-4 py-3 mb-2 text-white font-normal hover:bg-white/10 transition-colors text-base text-center rounded-lg cursor-pointer"
             >
               Contacts
-            </Link>
-            <Link 
-              href="/login" 
-              onClick={closeMobileMenu}
-              className="px-4 py-3 text-white font-normal hover:bg-white/10 transition-colors text-base text-center rounded-lg"
-            >
-              Log In
             </Link>
           </div>
           

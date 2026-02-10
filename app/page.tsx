@@ -19,14 +19,29 @@ export default function Home() {
   const heroContentRef = useRef<HTMLDivElement>(null)
   const parallaxOffset = useParallax(0.3)
 
-  // Scroll to top on page load
+  // Scroll to top on page load, or to contacts section if hash is present
   useEffect(() => {
-    window.scrollTo(0, 0)
-    // Also handle mobile browser address bar issues
     if (typeof window !== 'undefined') {
-      setTimeout(() => {
+      if (window.location.hash === '#contacts') {
+        // Wait for page to load, then scroll to contacts with offset
+        setTimeout(() => {
+          const element = document.getElementById('contacts')
+          if (element) {
+            const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
+            const offsetPosition = elementPosition - 100 // 100px offset from top
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            })
+          }
+        }, 500)
+      } else {
         window.scrollTo(0, 0)
-      }, 100)
+        // Also handle mobile browser address bar issues
+        setTimeout(() => {
+          window.scrollTo(0, 0)
+        }, 100)
+      }
     }
   }, [])
 

@@ -7,7 +7,7 @@ export default function ContactsSection() {
     const [setSectionRef, isSectionVisible] = useScrollFade()
     
     return (
-        <section ref={setSectionRef} className={`relative bg-white py-8 md:py-16 px-4 md:px-8 transition-all duration-1000 overflow-hidden ${isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <section id="contacts" ref={setSectionRef} className={`relative bg-white py-8 md:py-16 px-4 md:px-8 transition-all duration-1000 overflow-hidden ${isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             {/* Scattered Musical Icons Background */}
             <div className="absolute inset-0 pointer-events-none opacity-15 md:opacity-10">
                 {/* Microphone Icons */}
