@@ -7,9 +7,18 @@
     @apply box-border;
   }
   
+  html {
+    scroll-behavior: smooth;
+  }
+  
   html, body {
     @apply m-0 p-0;
     overflow-x: hidden;
+  }
+  
+  /* Performance optimizations for parallax */
+  .will-change-transform {
+    will-change: transform;
   }
 }
 
@@ -158,6 +167,43 @@
   .animate-pulse-delay-2 {
     animation: pulse-delay-2 2s ease-in-out infinite 0.5s;
   }
+
+  /* Parallax scroll animations */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Smooth fade in on scroll */
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out forwards;
+  }
+
+  /* Stagger animation delays */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
 }
 
 

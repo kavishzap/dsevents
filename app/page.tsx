@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import Navbar from '@/components/Navbar'
 import ServicesSection from '@/components/ServicesSection'
 import ExperienceBanner from '@/components/ExperienceBanner'
@@ -10,9 +10,15 @@ import AboutSection from '@/components/AboutSection'
 import AtmosphereBanner from '@/components/AtmosphereBanner'
 import ContactsSection from '@/components/ContactsSection'
 import Footer from '@/components/Footer'
+import ScrollToTop from '@/components/ScrollToTop'
 import Image from 'next/image'
+import { useParallax } from '@/hooks/useParallax'
 
 export default function Home() {
+  const heroImageRef = useRef<HTMLDivElement>(null)
+  const heroContentRef = useRef<HTMLDivElement>(null)
+  const parallaxOffset = useParallax(0.3)
+
   // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -23,19 +29,30 @@ export default function Home() {
       }, 100)
     }
   }, [])
+
+  // Apply parallax effect to hero image
+  useEffect(() => {
+    if (heroImageRef.current) {
+      heroImageRef.current.style.transform = `translateY(${parallaxOffset}px)`
+    }
+    if (heroContentRef.current) {
+      heroContentRef.current.style.transform = `translateY(${parallaxOffset * 0.5}px)`
+    }
+  }, [parallaxOffset])
+
   return (
     <>
     {/* Navbar */}
     <Navbar />
     <main className="relative min-h-screen overflow-hidden">
       {/* Hero Background Image with Overlay */}
-      <div className="absolute inset-0 z-0">
+      <div ref={heroImageRef} className="absolute inset-0 z-0 will-change-transform">
         {/* Hero Image - Replace with your image path */}
         <Image
           src="/assets/hero.jpg"
           alt="DS Events Background"
           fill
-          className="object-cover w-full h-full object-[center_30%]"
+          className="object-cover w-full h-full object-[center_30%] scale-110"
           priority
           quality={90}
         />
@@ -48,7 +65,7 @@ export default function Home() {
       </div>
 
       {/* Hero Content */}
-      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-8">
+      <div ref={heroContentRef} className="relative z-10 flex min-h-screen flex-col items-center justify-center px-8 will-change-transform">
         {/* Main Slogan */}
         <h1 className="mb-12 mt-32 text-center text-4xl font-bold text-white sm:text-5xl md:text-5xl lg:text-6xl tracking-tight">
           <span className="block md:inline">CREATING EXPERIENCES.</span>
@@ -96,6 +113,7 @@ export default function Home() {
     <AtmosphereBanner />
     <ContactsSection />
     <Footer />
+    <ScrollToTop />
     </>
   )
 }

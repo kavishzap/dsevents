@@ -1,8 +1,13 @@
+'use client'
+
 import Image from 'next/image'
+import { useScrollFade } from '@/hooks/useParallax'
 
 export default function ContactsSection() {
+    const [setSectionRef, isSectionVisible] = useScrollFade()
+    
     return (
-        <section className="bg-white py-8 md:py-16 px-4 md:px-8">
+        <section ref={setSectionRef} className={`bg-white py-8 md:py-16 px-4 md:px-8 transition-all duration-1000 ${isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <div className="max-w-7xl mx-auto">
                 <h2 className="text-xl md:text-3xl font-bold text-red-800 mb-3 md:mb-4">
                     Contact Us:

@@ -2,10 +2,12 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
+import { useScrollFade } from '@/hooks/useParallax'
 
 export default function ServicesSection() {
   const [selectedService, setSelectedService] = useState('DJ')
   const descriptionRef = useRef<HTMLDivElement>(null)
+  const [setSectionRef, isSectionVisible] = useScrollFade()
 
   useEffect(() => {
     if (descriptionRef.current) {
@@ -71,7 +73,7 @@ export default function ServicesSection() {
   const selectedServiceData = services.find(s => s.name === selectedService) || services[0]
 
   return (
-    <section className="bg-white py-8 md:py-16 px-4 md:px-8">
+    <section ref={setSectionRef} className={`bg-white py-8 md:py-16 px-4 md:px-8 transition-all duration-1000 ${isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12 items-start">
           {/* Left Column - Services Overview */}
