@@ -9,9 +9,13 @@ export default function ServicesSection() {
 
   useEffect(() => {
     if (descriptionRef.current) {
-      descriptionRef.current.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
+      const element = descriptionRef.current
+      const elementPosition = element.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - 50 // 100px offset from top
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
       })
     }
   }, [selectedService])
@@ -83,19 +87,21 @@ export default function ServicesSection() {
                 <div
                   key={index}
                   onClick={() => setSelectedService(service.name)}
-                  className="relative w-full rounded-lg overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-2xl"
+                  className="relative w-full rounded-lg overflow-hidden group cursor-pointer transition-all duration-300 hover:-translate-y-3 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
                 >
                   <div className="relative w-full" style={{ paddingBottom: '100%' }}>
                     <Image
                       src={service.image}
                       alt={service.name}
                       fill
-                      className="object-cover object-center"
+                      className="object-cover object-center transition-all duration-300 group-hover:brightness-110"
                       sizes="(max-width: 768px) 33vw, 33vw"
                     />
+                    {/* Hover overlay */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300"></div>
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span className="text-white text-xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold uppercase text-center px-1 md:px-2 leading-tight">
+                    <span className="text-white text-xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold uppercase text-center px-1 md:px-2 leading-tight transition-all duration-300 group-hover:drop-shadow-2xl group-hover:brightness-110">
                       {splitServiceName(service.name).map((word, i) => (
                         <span key={i} className="block">{word}</span>
                       ))}
@@ -113,7 +119,7 @@ export default function ServicesSection() {
             <div className="md:hidden w-full h-1 bg-red-800 mb-6"></div>
             
             {/* Content */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col md:pt-[102px]">
               <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-red-600 mb-4 md:mb-6 uppercase">{selectedServiceData.name}</h2>
               <div className="overflow-y-auto max-h-[400px] pr-2">
                 {selectedServiceData.description ? (
