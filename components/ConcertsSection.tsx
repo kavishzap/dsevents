@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useScrollFade } from '@/hooks/useParallax'
 
 export default function ConcertsSection() {
@@ -309,14 +310,14 @@ export default function ConcertsSection() {
 
         {/* UPCOMING CONCERTS Button */}
         <div className="flex justify-center mt-12 md:mt-16">
-          <button className="flex items-center gap-2 text-rose-700 hover:text-rose-800 transition-colors duration-300 underline decoration-2 underline-offset-4">
+          <Link href="/concerts" className="flex items-center gap-2 text-rose-700 hover:text-rose-800 transition-colors duration-300 underline decoration-2 underline-offset-4">
             <span className="text-sm md:text-base font-medium uppercase tracking-wide">
               Explore More
             </span>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-          </button>
+          </Link>
         </div>
       </div>
     </section>
