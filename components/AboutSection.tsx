@@ -1,4 +1,59 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+
 export default function AboutSection() {
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [touchStart, setTouchStart] = useState(0)
+  const [touchEnd, setTouchEnd] = useState(0)
+
+  const clients = [
+    { id: 1, image: '/assets/clients/1.jpg', alt: 'Ascencia' },
+    { id: 2, image: '/assets/clients/ABSA_Group_Limited_Logo.svg.png', alt: 'Absa' },
+    { id: 3, image: '/assets/clients/334780421_145944098370932_7320452367223027754_n.jpg', alt: 'Kendra by Ascencia' },
+    { id: 4, image: '/assets/clients/logo-init.png', alt: 'Tribeca Mall' },
+    { id: 5, image: '/assets/clients/326265811_700416474971239_8330579743167453708_n.jpg', alt: 'Le Suffren Hotel & Marina' },
+    { id: 6, image: '/assets/clients/5d70d7de11914b8f5e217597f836903d.jpg', alt: 'Mont Choisy Coral Azur Beach Resort' },
+    { id: 7, image: '/assets/clients/IQEQ_Lockup_Stacked_RGB.jpg', alt: 'IQEQ' },
+    { id: 8, image: '/assets/clients/ichos-logo-01.svg', alt: 'ICHOS PRODUCTION' },
+  ]
+
+  // Handle touch events for mobile carousel
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > 50
+    const isRightSwipe = distance < -50
+
+    if (isLeftSwipe && currentSlide < clients.length - 1) {
+      setCurrentSlide(currentSlide + 1)
+    }
+    if (isRightSwipe && currentSlide > 0) {
+      setCurrentSlide(currentSlide - 1)
+    }
+  }
+
+  // Auto-advance carousel on mobile
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768
+    if (!isMobile) return
+
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev === clients.length - 1 ? 0 : prev + 1))
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [clients.length])
+
   return (
     <section className="bg-white py-8 md:py-16 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
@@ -40,104 +95,65 @@ export default function AboutSection() {
             </p>
           </div>
 
-          {/* Client Logos Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {/* Ascencia */}
-            <div className="flex flex-col items-center justify-center p-4">
-              <div className="w-full h-24 md:h-32 flex items-center justify-center mb-2">
-                <img 
-                  src="/assets/clients/1.jpg" 
-                  alt="Ascencia" 
-                  className="max-w-full max-h-full object-contain"
-                />
-              </div>
+          {/* Mobile Carousel */}
+          <div className="md:hidden relative overflow-hidden">
+            <div 
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
+              {clients.map((client) => (
+                <div key={client.id} className="min-w-full flex flex-col items-center justify-center p-4">
+                  <div className="w-full h-32 flex items-center justify-center">
+                    <img 
+                      src={client.image} 
+                      alt={client.alt} 
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
+            
+            {/* Navigation Dots */}
+            <div className="flex justify-center gap-2 mt-4">
+              {clients.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    index === currentSlide ? 'bg-rose-700 w-6' : 'bg-gray-300'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
 
-            {/* Absa */}
-            <div className="flex flex-col items-center justify-center p-4">
-              <div className="w-full h-24 md:h-32 flex items-center justify-center mb-2">
-                <img 
-                  src="/assets/clients/ABSA_Group_Limited_Logo.svg.png" 
-                  alt="Absa" 
-                  className="max-w-full max-h-full object-contain"
-                />
+          {/* Desktop Grid */}
+          <div className="hidden md:grid grid-cols-4 gap-6 md:gap-8">
+            {clients.map((client) => (
+              <div key={client.id} className="flex flex-col items-center justify-center p-4 group cursor-pointer">
+                <div className="w-full h-32 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:brightness-110">
+                  <img 
+                    src={client.image} 
+                    alt={client.alt} 
+                    className="max-w-full max-h-full object-contain transition-all duration-300"
+                  />
+                </div>
               </div>
-            </div>
-
-            {/* Kendra by Ascencia */}
-            <div className="flex flex-col items-center justify-center p-4">
-              <div className="w-full h-24 md:h-32 flex items-center justify-center mb-2">
-                <img 
-                  src="/assets/clients/334780421_145944098370932_7320452367223027754_n.jpg" 
-                  alt="Kendra by Ascencia" 
-                  className="max-w-full max-h-full object-contain"
-                />
-              </div>
-            </div>
-
-            {/* Tribeca Mall */}
-            <div className="flex flex-col items-center justify-center p-4">
-              <div className="w-full h-24 md:h-32 flex items-center justify-center mb-2">
-                <img 
-                  src="/assets/clients/logo-init.png" 
-                  alt="Tribeca Mall" 
-                  className="max-w-full max-h-full object-contain"
-                />
-              </div>
-            </div>
-
-            {/* Le Suffren Hotel & Marina */}
-            <div className="flex flex-col items-center justify-center p-4">
-              <div className="w-full h-24 md:h-32 flex items-center justify-center mb-2">
-                <img 
-                  src="/assets/clients/326265811_700416474971239_8330579743167453708_n.jpg" 
-                  alt="Le Suffren Hotel & Marina" 
-                  className="max-w-full max-h-full object-contain"
-                />
-              </div>
-            </div>
-
-            {/* Mont Choisy Coral Azur Beach Resort */}
-            <div className="flex flex-col items-center justify-center p-4">
-              <div className="w-full h-24 md:h-32 flex items-center justify-center mb-2">
-                <img 
-                  src="/assets/clients/5d70d7de11914b8f5e217597f836903d.jpg" 
-                  alt="Mont Choisy Coral Azur Beach Resort" 
-                  className="max-w-full max-h-full object-contain"
-                />
-              </div>
-            </div>
-
-            {/* IQEQ */}
-            <div className="flex flex-col items-center justify-center p-4">
-              <div className="w-full h-24 md:h-32 flex items-center justify-center mb-2">
-                <img 
-                  src="/assets/clients/IQEQ_Lockup_Stacked_RGB.jpg" 
-                  alt="IQEQ" 
-                  className="max-w-full max-h-full object-contain"
-                />
-              </div>
-            </div>
-
-            {/* ICHOS PRODUCTION */}
-            <div className="flex flex-col items-center justify-center p-4">
-              <div className="w-full h-24 md:h-32 flex items-center justify-center mb-2">
-                <img 
-                  src="/assets/clients/ichos-logo-01.svg" 
-                  alt="ICHOS PRODUCTION" 
-                  className="max-w-full max-h-full object-contain"
-                />
-              </div>
-            </div>
+            ))}
           </div>
 
           {/* Know More About Us Button */}
           <div className="flex justify-center mt-12 md:mt-16">
-            <button className="px-8 py-4 rounded-full bg-rose-700 hover:bg-rose-800 transition-colors duration-300 flex items-center gap-3">
-              <span className="text-white text-lg md:text-xl font-semibold uppercase tracking-wide">
+            <button className="px-6 py-2.5 rounded-full bg-rose-700 hover:bg-rose-800 transition-colors duration-300 flex items-center gap-2 border border-rose-600">
+              <span className="text-white text-sm md:text-base font-medium uppercase tracking-wide">
                 Know More About Us
               </span>
-              <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>

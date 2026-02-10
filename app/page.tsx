@@ -1,3 +1,6 @@
+'use client'
+
+import { useEffect } from 'react'
 import Navbar from '@/components/Navbar'
 import ServicesSection from '@/components/ServicesSection'
 import ExperienceBanner from '@/components/ExperienceBanner'
@@ -10,8 +13,20 @@ import Footer from '@/components/Footer'
 import Image from 'next/image'
 
 export default function Home() {
+  // Scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    // Also handle mobile browser address bar issues
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        window.scrollTo(0, 0)
+      }, 100)
+    }
+  }, [])
   return (
     <>
+    {/* Navbar */}
+    <Navbar />
     <main className="relative min-h-screen overflow-hidden">
       {/* Hero Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
@@ -31,9 +46,6 @@ export default function Home() {
         {/* Smoky effect overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/40"></div>
       </div>
-
-      {/* Navbar */}
-      <Navbar />
 
       {/* Hero Content */}
       <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-8">
@@ -61,8 +73,16 @@ export default function Home() {
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
-            <span className="text-white text-lg font-light uppercase tracking-wider">
-              SHOWTIME
+            <span className="text-white text-lg font-light uppercase tracking-[0.3em]">
+              {'SHOWTIME'.split('').map((char, index) => (
+                <span
+                  key={index}
+                  className="animate-bounce-letter inline-block"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  {char}
+                </span>
+              ))}
             </span>
           </div>
         </div>

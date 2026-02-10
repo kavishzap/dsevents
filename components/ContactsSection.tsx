@@ -5,9 +5,9 @@ export default function ContactsSection() {
         <section className="bg-white py-8 md:py-16 px-4 md:px-8">
             <div className="max-w-7xl mx-auto">
                 <h2 className="text-xl md:text-3xl font-bold text-red-800 mb-3 md:mb-4">
-                    Contact Us
+                    What do we provide as an entertainment company?
                 </h2>
-                <h3 className="text-lg md:text-2xl font-bold text-gray-700 mb-6 md:mb-8 drop-shadow-sm">Contact us for any inquiries or bookings</h3>
+                <h3 className="text-lg md:text-2xl font-bold text-gray-700 mb-6 md:mb-8 drop-shadow-sm">Contact Us:</h3>
 
                 {/* Contact Profiles Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
