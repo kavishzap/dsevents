@@ -11,9 +11,9 @@ export default function ConcertsPage() {
     window.scrollTo(0, 0)
   }, [])
 
-  const aboutEventText = "At <span className=\"font-bold\">DS Events</span>, we bring life to your celebrations with our top-tier DJ services, ensuring that every event is filled with the perfect beats, seamless transitions, and an electric atmosphere. Whether you're hosting a <span className=\"font-bold\">birthday party, engagement ceremony, wedding reception, corporate event, or any other special gathering</span>, our skilled DJs are here to make it unforgettable."
+  const aboutEventText = "At <span class=\"font-bold\">DS Events</span>, we bring life to your celebrations with our top-tier DJ services, ensuring that every event is filled with the perfect beats, seamless transitions, and an electric atmosphere. Whether you're hosting a <span class=\"font-bold\">birthday party, engagement ceremony, wedding reception, corporate event, or any other special gathering</span>, our skilled DJs are here to make it unforgettable."
 
-  const charityEventText = "At <span className=\"font-bold\">DS Events</span>, we elevate charity fund-raising events with the right ambience, energy, and execution. From inspiring moments to seamless flow, we help create events that connect people and drive meaningful impact."
+  const charityEventText = "At <span class=\"font-bold\">DS Events</span>, we elevate charity fund-raising events with the right ambience, energy, and execution. From inspiring moments to seamless flow, we help create events that connect people and drive meaningful impact."
 
   return (
     <>
