@@ -58,9 +58,8 @@ export default function AboutSection() {
     <section className="bg-white py-8 md:py-16 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-xl md:text-3xl font-bold text-red-800 mb-3 md:mb-4">
-          What do we provide as an entertainment company?
+          About Us:
         </h2>
-        <h3 className="text-lg md:text-2xl font-bold text-gray-700 mb-6 md:mb-8 drop-shadow-sm">About Us:</h3>
         
         <div className="space-y-4 md:space-y-6">
           <p className="text-gray-700 text-base md:text-lg leading-relaxed">

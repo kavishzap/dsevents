@@ -87,26 +87,44 @@ export default function ServicesSection() {
                 <div
                   key={index}
                   onClick={() => setSelectedService(service.name)}
-                  className="relative w-full rounded-lg overflow-hidden group cursor-pointer transition-all duration-300 hover:-translate-y-3 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
+                  className="relative w-full rounded-lg overflow-hidden group cursor-pointer transition-all duration-300 hover:-translate-y-3 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] animate-gentle-bounce"
                 >
+                  {/* Pulsing border effect - always visible */}
+                  <div className="absolute inset-0 rounded-lg border-2 border-red-600 opacity-30 animate-pulse-border pointer-events-none z-10"></div>
+                  
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 rounded-lg bg-red-600/0 animate-pulse-glow pointer-events-none"></div>
+                  
                   <div className="relative w-full" style={{ paddingBottom: '100%' }}>
                     <Image
                       src={service.image}
                       alt={service.name}
                       fill
-                      className="object-cover object-center transition-all duration-300 group-hover:brightness-110"
+                      className="object-cover object-center transition-all duration-300 group-hover:brightness-110 group-hover:scale-105"
                       sizes="(max-width: 768px) 33vw, 33vw"
                     />
                     {/* Hover overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300"></div>
                   </div>
+                  
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span className="text-white text-xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold uppercase text-center px-1 md:px-2 leading-tight transition-all duration-300 group-hover:drop-shadow-2xl group-hover:brightness-110">
+                    <span className="text-white text-xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold uppercase text-center px-1 md:px-2 leading-tight transition-all duration-300 group-hover:drop-shadow-2xl group-hover:brightness-110 group-hover:scale-110">
                       {splitServiceName(service.name).map((word, i) => (
                         <span key={i} className="block">{word}</span>
                       ))}
                     </span>
                   </div>
+                  
+                  {/* Animated click indicator - pulsing arrow/pointer */}
+                  <div className="absolute top-3 right-3 pointer-events-none z-20">
+                    <svg className="w-5 h-5 text-red-600 animate-bounce-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 15l-2-5M9.396 9.396a2.5 2.5 0 114.243 2.5M15 15l-4.243-4.243a2.5 2.5 0 00-3.536 0L4.05 19.95M15 15l-2.121-2.121" />
+                    </svg>
+                  </div>
+                  
+                  {/* Pulsing dots indicator at corners */}
+                  <div className="absolute top-2 left-2 w-2 h-2 bg-red-600 rounded-full opacity-70 animate-pulse-delay-1"></div>
+                  <div className="absolute bottom-2 right-2 w-2 h-2 bg-red-600 rounded-full opacity-70 animate-pulse-delay-2"></div>
                 </div>
               ))}
             </div>
