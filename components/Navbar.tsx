@@ -1,11 +1,25 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [scrollY, setScrollY] = useState(0)
+  const navRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      setScrollY(currentScrollY)
+      setIsScrolled(currentScrollY > 50)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -17,9 +31,35 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-6 md:px-8 lg:px-12">
-        {/* Logo */}
-        <div className="flex items-center">
+      <nav 
+        ref={navRef}
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 md:px-8 lg:px-12 md:py-6 transition-all duration-300 ${
+          isScrolled ? 'backdrop-blur-md shadow-lg' : ''
+        }`}
+      >
+        {/* Background Image Layer */}
+        {isScrolled && (
+          <div 
+            className="absolute inset-0 -z-20"
+            style={{
+              backgroundImage: `url('/assets/hero.jpg')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center top',
+              backgroundRepeat: 'no-repeat',
+            }}
+          >
+            {/* Overlay for better readability */}
+            <div className="absolute inset-0 bg-black/70"></div>
+            {/* Gradient Overlays matching hero */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/40 via-transparent to-orange-900/50"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/40"></div>
+          </div>
+        )}
+        
+        {/* Navbar Content */}
+        <div className="relative z-10 flex items-center justify-between w-full">
+          {/* Logo */}
+          <div className="flex items-center">
           <Image
             src="/assets/DS Events Logo without BG WHITE.png"
             alt="DS Events & Shows"
@@ -53,7 +93,7 @@ export default function Navbar() {
         </div>
         
         {/* Mobile Menu Button */}
-        <div className="md:hidden">
+        <div className="md:hidden relative z-10">
           <button 
             onClick={toggleMobileMenu}
             className="text-white z-50"
@@ -70,6 +110,7 @@ export default function Navbar() {
             )}
           </button>
         </div>
+        </div>
       </nav>
 
       {/* Mobile Sidebar Menu */}
@@ -78,12 +119,6 @@ export default function Navbar() {
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        {/* Backdrop */}
-        <div 
-          className="absolute inset-0 bg-black/60"
-          onClick={closeMobileMenu}
-        ></div>
-        
         {/* Sidebar */}
         <div className="absolute left-0 top-0 h-full w-64 bg-black/95 backdrop-blur-md shadow-2xl flex flex-col">
           <div className="flex flex-col p-6 pt-20 flex-1">
