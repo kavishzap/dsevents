@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-export default function ExperienceBanner() {
+export default function AtmosphereBanner() {
   return (
     <section className="relative w-full min-h-[300px] overflow-hidden">
       {/* Background Hero Image */}
@@ -24,9 +24,9 @@ export default function ExperienceBanner() {
       {/* Content */}
       <div className="relative z-10 flex min-h-[300px] flex-col items-center justify-center px-8">
         <h2 className="text-center text-4xl font-bold text-white sm:text-5xl md:text-5xl lg:text-6xl tracking-tight">
-          <span className="block md:inline">EVERY BEAT.</span>
+          <span className="block md:inline">CRAFTING ATMOSPHERES</span>
           <span className="hidden md:inline"> </span>
-          <span className="block md:inline">EVERY MOMENT.</span>
+          <span className="block md:inline">THAT INSPIRE.</span>
         </h2>
       </div>
     </section>

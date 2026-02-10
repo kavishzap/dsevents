@@ -2,6 +2,10 @@ import Navbar from '@/components/Navbar'
 import ServicesSection from '@/components/ServicesSection'
 import ExperienceBanner from '@/components/ExperienceBanner'
 import ConcertsSection from '@/components/ConcertsSection'
+import MusicBanner from '@/components/MusicBanner'
+import AboutSection from '@/components/AboutSection'
+import AtmosphereBanner from '@/components/AtmosphereBanner'
+import ContactsSection from '@/components/ContactsSection'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
 
@@ -67,6 +71,10 @@ export default function Home() {
     <ServicesSection />
     <ExperienceBanner />
     <ConcertsSection />
+    <MusicBanner />
+    <AboutSection />
+    <AtmosphereBanner />
+    <ContactsSection />
     <Footer />
     </>
   )
