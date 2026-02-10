@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 
 export default function ServicesSection() {
-  const [selectedService, setSelectedService] = useState('LIVE')
+  const [selectedService, setSelectedService] = useState('DJ')
   const descriptionRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -68,12 +68,12 @@ export default function ServicesSection() {
     },
   ]
 
-  const selectedServiceData = services.find(s => s.name === selectedService) || services[1]
+  const selectedServiceData = services.find(s => s.name === selectedService) || services[0]
 
   return (
     <section className="bg-white py-8 md:py-16 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12 items-start">
           {/* Left Column - Services Overview */}
           <div className="lg:col-span-2">
             <h2 className="text-xl md:text-3xl font-bold text-red-800 mb-3 md:mb-4">
@@ -113,21 +113,21 @@ export default function ServicesSection() {
           </div>
 
           {/* Right Column - Highlighted Service Detail */}
-          <div ref={descriptionRef} className="flex flex-col md:flex-row lg:col-span-1 mt-8 md:mt-0 min-h-[300px]">
+          <div ref={descriptionRef} className="flex flex-col md:flex-row lg:col-span-1 mt-8 md:mt-0 md:min-h-[600px]">
             {/* Vertical Separator */}
-            <div className="hidden md:block w-1 bg-red-800 mr-8 h-full min-h-[300px]"></div>
+            <div className="hidden md:block w-1 bg-red-800 mr-8 h-[700px] flex-shrink-0"></div>
             <div className="md:hidden w-full h-1 bg-red-800 mb-6"></div>
             
             {/* Content */}
-            <div className="flex-1 flex flex-col md:pt-[102px]">
-              <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-red-600 mb-4 md:mb-6 uppercase">{selectedServiceData.name}</h2>
-              <div className="overflow-y-auto max-h-[400px] pr-2">
+            <div className="flex-1 flex flex-col md:pt-[102px] md:pb-0 md:min-h-[600px]">
+              <h2 key={`title-${selectedService}`} className="text-4xl md:text-6xl lg:text-7xl font-bold text-red-600 mb-4 md:mb-6 uppercase animate-fade-in">{selectedServiceData.name}</h2>
+              <div className="flex-1 pr-2">
                 {selectedServiceData.description ? (
-                  <p className="text-gray-700 text-sm md:text-base lg:text-lg leading-relaxed">
+                  <p key={`desc-${selectedService}`} className="text-gray-700 text-base md:text-lg lg:text-2xl leading-relaxed animate-fade-in">
                     {selectedServiceData.description}
                   </p>
                 ) : (
-                  <p className="text-gray-700 text-sm md:text-base lg:text-lg leading-relaxed">
+                  <p key={`desc-${selectedService}`} className="text-gray-700 text-base md:text-lg lg:text-2xl leading-relaxed animate-fade-in">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor 
                     incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
                     exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
@@ -136,6 +136,18 @@ export default function ServicesSection() {
               </div>
             </div>
           </div>
+        </div>
+        
+        {/* Explore More Button */}
+        <div className="flex justify-center mt-12 md:mt-16">
+          <button className="px-8 py-4 rounded-full bg-rose-700 hover:bg-rose-800 transition-colors duration-300 flex items-center gap-3">
+            <span className="text-white text-lg md:text-xl font-semibold uppercase tracking-wide">
+              Explore more
+            </span>
+            <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       </div>
     </section>

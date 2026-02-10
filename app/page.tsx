@@ -1,5 +1,7 @@
 import Navbar from '@/components/Navbar'
 import ServicesSection from '@/components/ServicesSection'
+import ExperienceBanner from '@/components/ExperienceBanner'
+import ConcertsSection from '@/components/ConcertsSection'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
 
@@ -63,6 +65,8 @@ export default function Home() {
       </div>
     </main>
     <ServicesSection />
+    <ExperienceBanner />
+    <ConcertsSection />
     <Footer />
     </>
   )
