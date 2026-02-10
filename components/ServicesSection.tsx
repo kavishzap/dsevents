@@ -78,24 +78,24 @@ export default function ServicesSection() {
             <h3 className="text-lg md:text-2xl font-bold text-gray-700 mb-6 md:mb-8 drop-shadow-sm">Services:</h3>
             
             {/* Services Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-10 md:gap-16">
               {services.map((service, index) => (
                 <div
                   key={index}
                   onClick={() => setSelectedService(service.name)}
-                  className="relative w-full rounded-lg overflow-hidden group cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
+                  className="relative w-full rounded-lg overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-2xl"
                 >
                   <div className="relative w-full" style={{ paddingBottom: '100%' }}>
                     <Image
                       src={service.image}
                       alt={service.name}
                       fill
-                      className="object-cover object-center scale-[1.8] group-hover:scale-[2.0] transition-transform duration-300"
+                      className="object-cover object-center"
                       sizes="(max-width: 768px) 33vw, 33vw"
                     />
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span className="text-white text-xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold uppercase text-center px-1 md:px-2 leading-tight transform group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-white text-xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold uppercase text-center px-1 md:px-2 leading-tight">
                       {splitServiceName(service.name).map((word, i) => (
                         <span key={i} className="block">{word}</span>
                       ))}
