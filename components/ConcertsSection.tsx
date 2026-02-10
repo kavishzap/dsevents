@@ -5,6 +5,9 @@ import Image from 'next/image'
 
 export default function ConcertsSection() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [touchStart, setTouchStart] = useState(0)
+  const [touchEnd, setTouchEnd] = useState(0)
   
   // Initial concerts data
   const initialConcerts = [
@@ -20,7 +23,7 @@ export default function ConcertsSection() {
     },
     { 
       id: 3,
-      image: '/assets/concerts/concert3.jpg',
+      image: '/assets/concerts/PHOTO-2023-08-31-14-22-47.jpg',
       title: 'Lorem ipsum dolor sit'
     },
     { 
@@ -39,27 +42,105 @@ export default function ConcertsSection() {
   const [isSliding, setIsSliding] = useState(false)
   const centerIndex = 2 // Third item (0-indexed)
 
-  // Auto-shuffling animation with sliding effect
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsSliding(true)
-      
-      setTimeout(() => {
-        setConcerts((prevConcerts) => {
-          // Rotate array: move first item to the end
-          const newConcerts = [...prevConcerts]
-          const firstItem = newConcerts.shift()
-          if (firstItem) {
-            newConcerts.push(firstItem)
-          }
-          return newConcerts
-        })
-        setIsSliding(false)
-      }, 500) // Match transition duration
-    }, 3000) // Shuffle every 3 seconds
+  // Handle touch events for mobile carousel
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX)
+  }
 
-    return () => clearInterval(interval)
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > 50
+    const isRightSwipe = distance < -50
+
+    if (isLeftSwipe && currentSlide < concerts.length - 1) {
+      setCurrentSlide(currentSlide + 1)
+    }
+    if (isRightSwipe && currentSlide > 0) {
+      setCurrentSlide(currentSlide - 1)
+    }
+  }
+
+  // Navigate carousel
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index)
+  }
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev === concerts.length - 1 ? 0 : prev + 1))
+  }
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev === 0 ? concerts.length - 1 : prev - 1))
+  }
+
+  // Auto-shuffling animation with sliding effect (desktop only - md and above)
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null
+
+    const setupDesktopSliding = () => {
+      // Clear any existing interval
+      if (interval) clearInterval(interval)
+      
+      // Only run on desktop (768px and above)
+      if (window.innerWidth >= 768) {
+        interval = setInterval(() => {
+          setIsSliding(true)
+          
+          setTimeout(() => {
+            setConcerts((prevConcerts) => {
+              // Rotate array: move first item to the end
+              const newConcerts = [...prevConcerts]
+              const firstItem = newConcerts.shift()
+              if (firstItem) {
+                newConcerts.push(firstItem)
+              }
+              return newConcerts
+            })
+            setIsSliding(false)
+          }, 500) // Match transition duration
+        }, 3000) // Shuffle every 3 seconds
+      }
+    }
+
+    setupDesktopSliding()
+    window.addEventListener('resize', setupDesktopSliding)
+
+    return () => {
+      if (interval) clearInterval(interval)
+      window.removeEventListener('resize', setupDesktopSliding)
+    }
   }, [])
+
+  // Auto-advance carousel on mobile only (below md breakpoint)
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null
+
+    const setupMobileCarousel = () => {
+      // Clear any existing interval
+      if (interval) clearInterval(interval)
+      
+      // Only run on mobile (below 768px)
+      if (window.innerWidth < 768) {
+        interval = setInterval(() => {
+          setCurrentSlide((prev) => (prev === concerts.length - 1 ? 0 : prev + 1))
+        }, 4000) // Change slide every 4 seconds on mobile
+      }
+    }
+
+    setupMobileCarousel()
+    window.addEventListener('resize', setupMobileCarousel)
+
+    return () => {
+      if (interval) clearInterval(interval)
+      window.removeEventListener('resize', setupMobileCarousel)
+    }
+  }, [concerts.length])
 
   return (
     <section className="bg-white py-8 md:py-16 px-4 md:px-8">
@@ -69,8 +150,55 @@ export default function ConcertsSection() {
         </h2>
         <h3 className="text-lg md:text-2xl font-bold text-gray-700 mb-6 md:mb-8 drop-shadow-sm">Concerts:</h3>
         
-        {/* Concerts Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
+        {/* Mobile Carousel */}
+        <div className="md:hidden relative">
+          <div 
+            className="flex overflow-hidden"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {concerts.map((concert, index) => (
+              <div
+                key={concert.id}
+                className="min-w-full flex flex-col transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              >
+                <div className="relative w-full rounded-lg overflow-hidden">
+                  <div className="relative w-full" style={{ paddingBottom: '150%' }}>
+                    <Image
+                      src={concert.image}
+                      alt={concert.title}
+                      fill
+                      className="object-cover object-center"
+                      sizes="100vw"
+                    />
+                  </div>
+                </div>
+                <p className="text-center text-gray-700 text-sm mt-2 md:mt-3">
+                  {concert.title}
+                </p>
+              </div>
+            ))}
+          </div>
+          
+          {/* Navigation Dots */}
+          <div className="flex justify-center gap-2 mt-4">
+            {concerts.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  index === currentSlide ? 'bg-rose-700 w-6' : 'bg-gray-300'
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop Grid */}
+        <div className="hidden md:grid grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
           {concerts.map((concert, index) => {
             const isCenter = index === centerIndex
             const isHovered = hoveredIndex === index
@@ -95,7 +223,7 @@ export default function ConcertsSection() {
                       alt={concert.title}
                       fill
                       className="object-cover object-center transition-all duration-300"
-                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 33vw, 20vw"
+                      sizes="(max-width: 768px) 33vw, 20vw"
                     />
                     {/* Overlay - shown on all except center, removed on hover */}
                     {showOverlay && (
