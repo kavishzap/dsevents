@@ -140,11 +140,11 @@ export default function ServicesSection() {
         
         {/* Explore More Button */}
         <div className="flex justify-center mt-12 md:mt-16">
-          <button className="px-6 py-2.5 rounded-full bg-rose-700 hover:bg-rose-800 transition-colors duration-300 flex items-center gap-2 border border-rose-600">
-            <span className="text-white text-sm md:text-base font-medium uppercase tracking-wide">
+          <button className="flex items-center gap-2 text-rose-700 hover:text-rose-800 transition-colors duration-300 underline decoration-2 underline-offset-4">
+            <span className="text-sm md:text-base font-medium uppercase tracking-wide">
               Explore more
             </span>
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
