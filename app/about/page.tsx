@@ -169,8 +169,7 @@ export default function AboutPage() {
                           },
                           axisBorder: {
                             show: true,
-                            color: '#374151',
-                            width: 2
+                            color: '#374151'
                           },
                           axisTicks: {
                             show: true,
@@ -194,8 +193,7 @@ export default function AboutPage() {
                           },
                           axisBorder: {
                             show: true,
-                            color: '#374151',
-                            width: 2
+                            color: '#374151'
                           },
                           axisTicks: {
                             show: true,
@@ -297,8 +295,7 @@ export default function AboutPage() {
                           },
                           axisBorder: {
                             show: true,
-                            color: '#374151',
-                            width: 2
+                            color: '#374151'
                           },
                           axisTicks: {
                             show: true,
@@ -325,8 +322,7 @@ export default function AboutPage() {
                           },
                           axisBorder: {
                             show: true,
-                            color: '#374151',
-                            width: 2
+                            color: '#374151'
                           },
                           axisTicks: {
                             show: true,
@@ -432,8 +428,7 @@ export default function AboutPage() {
                           },
                           axisBorder: {
                             show: true,
-                            color: '#374151',
-                            width: 2
+                            color: '#374151'
                           },
                           axisTicks: {
                             show: true,
@@ -460,8 +455,7 @@ export default function AboutPage() {
                           },
                           axisBorder: {
                             show: true,
-                            color: '#374151',
-                            width: 2
+                            color: '#374151'
                           },
                           axisTicks: {
                             show: true,
