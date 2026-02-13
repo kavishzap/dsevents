@@ -7,20 +7,107 @@ import Footer from '@/components/Footer'
 import ScrollToTop from '@/components/ScrollToTop'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
+interface Event {
+  start_date: string
+  end_date: string
+}
 
 export default function ReservationsPage() {
     const [fullName, setFullName] = useState('')
     const [email, setEmail] = useState('')
     const [phone, setPhone] = useState('')
     const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+    const [selectedDateRange, setSelectedDateRange] = useState<[Date | null, Date | null]>([null, null])
+    const [endOnSameDate, setEndOnSameDate] = useState(true)
     const [selectedServices, setSelectedServices] = useState<string[]>([])
     const [eventDescription, setEventDescription] = useState('')
     const [specialRequests, setSpecialRequests] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [blockedDates, setBlockedDates] = useState<Date[]>([])
 
     useEffect(() => {
         window.scrollTo(0, 0)
+        fetchEvents()
     }, [])
+
+    const fetchEvents = async () => {
+        try {
+            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+            const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+            if (!supabaseUrl || !supabaseKey) {
+                console.error('Supabase credentials not found')
+                return
+            }
+
+            const response = await fetch(
+                `${supabaseUrl}/rest/v1/events?select=start_date,end_date&status=in.(confirmed,completed)&order=start_date.desc`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'apikey': supabaseKey,
+                        'Authorization': `Bearer ${supabaseKey}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    }
+                }
+            )
+
+            if (!response.ok) {
+                console.error('Error fetching events:', response.statusText)
+                return
+            }
+
+            const data: Event[] = await response.json()
+
+            if (data && Array.isArray(data)) {
+                // Convert event date ranges to blocked dates
+                // Server already filters for confirmed/completed events
+                const dates: Date[] = []
+                data.forEach((event) => {
+                    // Extract date part (YYYY-MM-DD) from ISO string to avoid timezone issues
+                    const startDateStr = event.start_date.split('T')[0] // "2026-02-28"
+                    const endDateStr = event.end_date.split('T')[0] // "2026-03-02"
+                    
+                    // Parse date strings (YYYY-MM-DD format)
+                    const [startYear, startMonth, startDay] = startDateStr.split('-').map(Number)
+                    const [endYear, endMonth, endDay] = endDateStr.split('-').map(Number)
+                    
+                    // Create dates in local timezone
+                    const start = new Date(startYear, startMonth - 1, startDay)
+                    const end = new Date(endYear, endMonth - 1, endDay)
+                    
+                    // Add all dates in the range
+                    const currentDate = new Date(start)
+                    while (currentDate <= end) {
+                        // Create a new date object for each date to avoid reference issues
+                        const dateToAdd = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate())
+                        dates.push(dateToAdd)
+                        currentDate.setDate(currentDate.getDate() + 1)
+                    }
+                })
+                setBlockedDates(dates)
+            }
+        } catch (error) {
+            console.error('Error fetching events:', error)
+        }
+    }
+
+    const isDateBlocked = (date: Date): boolean => {
+        if (blockedDates.length === 0) {
+            return false
+        }
+        
+        // Normalize the date to compare only year, month, day
+        const normalizedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+        const normalizedDateStr = `${normalizedDate.getFullYear()}-${String(normalizedDate.getMonth() + 1).padStart(2, '0')}-${String(normalizedDate.getDate()).padStart(2, '0')}`
+        
+        return blockedDates.some(blockedDate => {
+            const normalizedBlocked = new Date(blockedDate.getFullYear(), blockedDate.getMonth(), blockedDate.getDate())
+            const normalizedBlockedStr = `${normalizedBlocked.getFullYear()}-${String(normalizedBlocked.getMonth() + 1).padStart(2, '0')}-${String(normalizedBlocked.getDate()).padStart(2, '0')}`
+            return normalizedDateStr === normalizedBlockedStr
+        })
+    }
 
     const services = [
         {
@@ -60,17 +147,35 @@ export default function ReservationsPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        if (!fullName || !email || !phone || !selectedDate || selectedServices.length === 0) {
+        // Check if date is selected (single date or date range)
+        const hasDate = endOnSameDate ? selectedDate : (selectedDateRange[0] && selectedDateRange[1])
+        
+        if (!fullName || !email || !phone || !hasDate || selectedServices.length === 0) {
             return
         }
 
         setIsSubmitting(true)
 
-        const dateString = selectedDate.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        })
+        let dateString = ''
+        if (endOnSameDate && selectedDate) {
+            dateString = selectedDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            })
+        } else if (!endOnSameDate && selectedDateRange[0] && selectedDateRange[1]) {
+            const startDate = selectedDateRange[0].toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            })
+            const endDate = selectedDateRange[1].toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            })
+            dateString = `${startDate} - ${endDate}`
+        }
 
         // Create properly formatted WhatsApp message
         let whatsappMessage = `*Reservation Request*\n\n`
@@ -110,6 +215,7 @@ export default function ReservationsPage() {
             setEmail('')
             setPhone('')
             setSelectedDate(null)
+            setSelectedDateRange([null, null])
             setSelectedServices([])
             setEventDescription('')
             setSpecialRequests('')
@@ -187,33 +293,179 @@ export default function ReservationsPage() {
 
                             {/* Select Date */}
                             <div>
-                                <label className="block text-xl md:text-2xl font-bold text-gray-800 mb-4">
-                                    Select Date
-                                </label>
-                                <div className="w-full">
-                                    <Calendar
-                                        onChange={(value) => setSelectedDate(value as Date)}
-                                        value={selectedDate}
-                                        minDate={new Date()}
-                                        className="w-full border-2 border-gray-300 rounded-lg p-4 shadow-lg"
-                                        tileClassName={({ date, view }) => {
-                                            if (view === 'month') {
-                                                if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
-                                                    return 'bg-red-600 text-white rounded-lg'
+                                <div className="flex items-center justify-between mb-4">
+                                    <label className="block text-xl md:text-2xl font-bold text-gray-800">
+                                        Select Date
+                                    </label>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={endOnSameDate}
+                                            onChange={(e) => {
+                                                setEndOnSameDate(e.target.checked)
+                                                if (e.target.checked) {
+                                                    // Reset date range when switching to single date
+                                                    setSelectedDateRange([null, null])
+                                                } else {
+                                                    // Reset single date when switching to date range
+                                                    setSelectedDate(null)
                                                 }
-                                                return 'hover:bg-red-100 rounded-lg'
-                                            }
-                                            return ''
-                                        }}
-                                    />
+                                            }}
+                                            className="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-600 focus:ring-2"
+                                        />
+                                        <span className="text-base md:text-lg font-medium text-gray-700">
+                                            End on same date
+                                        </span>
+                                    </label>
                                 </div>
-                                {selectedDate && (
+                                <div className="w-full">
+                                    {endOnSameDate ? (
+                                        <Calendar
+                                            key={`single-${blockedDates.length}`}
+                                            onChange={(value) => {
+                                                const selected = value as Date
+                                                // Prevent selecting blocked dates
+                                                if (!isDateBlocked(selected)) {
+                                                    setSelectedDate(selected)
+                                                } else {
+                                                    alert('This date is already booked. Please select another date.')
+                                                }
+                                            }}
+                                            value={selectedDate}
+                                            minDate={new Date()}
+                                            selectRange={false}
+                                            className="w-full border-2 border-gray-300 rounded-lg p-4 shadow-lg"
+                                            tileDisabled={({ date, view }) => {
+                                                if (view === 'month') {
+                                                    return isDateBlocked(date)
+                                                }
+                                                return false
+                                            }}
+                                            tileClassName={({ date, view }) => {
+                                                if (view === 'month') {
+                                                    if (isDateBlocked(date)) {
+                                                        return 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-50'
+                                                    }
+                                                    if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
+                                                        return 'bg-red-600 text-white rounded-lg'
+                                                    }
+                                                    return 'hover:bg-red-100 rounded-lg'
+                                                }
+                                                return ''
+                                            }}
+                                            tileContent={({ date, view }) => {
+                                                if (view === 'month' && isDateBlocked(date)) {
+                                                    return (
+                                                        <div className="absolute bottom-0 left-0 right-0 flex justify-center">
+                                                            <span className="text-[8px] md:text-[10px] font-bold text-red-600 bg-white px-1 rounded border border-red-600">
+                                                                TAKEN
+                                                            </span>
+                                                        </div>
+                                                    )
+                                                }
+                                                return null
+                                            }}
+                                        />
+                                    ) : (
+                                        <Calendar
+                                            key={`range-${blockedDates.length}`}
+                                            onChange={(value) => {
+                                                const range = value as [Date, Date] | Date
+                                                if (Array.isArray(range)) {
+                                                    const [start, end] = range
+                                                    // Check if any date in the range is blocked
+                                                    if (start && end) {
+                                                        const currentDate = new Date(start)
+                                                        let hasBlockedDate = false
+                                                        while (currentDate <= end) {
+                                                            if (isDateBlocked(currentDate)) {
+                                                                hasBlockedDate = true
+                                                                break
+                                                            }
+                                                            currentDate.setDate(currentDate.getDate() + 1)
+                                                        }
+                                                        if (!hasBlockedDate) {
+                                                            setSelectedDateRange([start, end])
+                                                        } else {
+                                                            alert('Some dates in this range are already booked. Please select another date range.')
+                                                            setSelectedDateRange([null, null])
+                                                        }
+                                                    } else if (start) {
+                                                        setSelectedDateRange([start, null])
+                                                    }
+                                                }
+                                            }}
+                                            value={selectedDateRange}
+                                            minDate={new Date()}
+                                            selectRange={true}
+                                            className="w-full border-2 border-gray-300 rounded-lg p-4 shadow-lg"
+                                            tileDisabled={({ date, view }) => {
+                                                if (view === 'month') {
+                                                    return isDateBlocked(date)
+                                                }
+                                                return false
+                                            }}
+                                            tileClassName={({ date, view }) => {
+                                                if (view === 'month') {
+                                                    if (isDateBlocked(date)) {
+                                                        return 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-50'
+                                                    }
+                                                    // Highlight range
+                                                    if (selectedDateRange[0] && selectedDateRange[1]) {
+                                                        const dateStr = date.toDateString()
+                                                        const startStr = selectedDateRange[0].toDateString()
+                                                        const endStr = selectedDateRange[1].toDateString()
+                                                        if (dateStr === startStr || dateStr === endStr || 
+                                                            (date >= selectedDateRange[0] && date <= selectedDateRange[1])) {
+                                                            return 'bg-red-600 text-white rounded-lg'
+                                                        }
+                                                    } else if (selectedDateRange[0] && date.toDateString() === selectedDateRange[0].toDateString()) {
+                                                        return 'bg-red-400 text-white rounded-lg'
+                                                    }
+                                                    return 'hover:bg-red-100 rounded-lg'
+                                                }
+                                                return ''
+                                            }}
+                                            tileContent={({ date, view }) => {
+                                                if (view === 'month' && isDateBlocked(date)) {
+                                                    return (
+                                                        <div className="absolute bottom-0 left-0 right-0 flex justify-center">
+                                                            <span className="text-[8px] md:text-[10px] font-bold text-red-600 bg-white px-1 rounded border border-red-600">
+                                                                TAKEN
+                                                            </span>
+                                                        </div>
+                                                    )
+                                                }
+                                                return null
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                                {endOnSameDate && selectedDate && (
                                     <p className="mt-4 text-lg text-gray-700 font-medium">
                                         Selected: {selectedDate.toLocaleDateString('en-US', {
                                             year: 'numeric',
                                             month: 'long',
                                             day: 'numeric'
                                         })}
+                                    </p>
+                                )}
+                                {!endOnSameDate && selectedDateRange[0] && selectedDateRange[1] && (
+                                    <p className="mt-4 text-lg text-gray-700 font-medium">
+                                        Selected Range: {selectedDateRange[0].toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric'
+                                        })} - {selectedDateRange[1].toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric'
+                                        })}
+                                    </p>
+                                )}
+                                {!endOnSameDate && selectedDateRange[0] && !selectedDateRange[1] && (
+                                    <p className="mt-4 text-lg text-gray-500 font-medium">
+                                        Select end date...
                                     </p>
                                 )}
                             </div>
@@ -288,7 +540,7 @@ export default function ReservationsPage() {
                             <div className="pt-4">
                                 <button
                                     type="submit"
-                                    disabled={isSubmitting || !fullName || !email || !phone || !selectedDate || selectedServices.length === 0}
+                                    disabled={isSubmitting || !fullName || !email || !phone || (endOnSameDate ? !selectedDate : (!selectedDateRange[0] || !selectedDateRange[1])) || selectedServices.length === 0}
                                     className="w-full md:w-auto px-12 py-4 bg-red-600 text-white text-lg font-bold rounded-lg hover:bg-red-700 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >
                                     {isSubmitting ? (
