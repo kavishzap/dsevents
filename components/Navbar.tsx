@@ -9,6 +9,9 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [scrollY, setScrollY] = useState(0)
+  const [isEventDropdownOpen, setIsEventDropdownOpen] = useState(false)
+  const [isMobileEventDropdownOpen, setIsMobileEventDropdownOpen] = useState(false)
+  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const navRef = useRef<HTMLElement>(null)
   const pathname = usePathname()
 
@@ -29,7 +32,12 @@ export default function Navbar() {
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (dropdownTimeoutRef.current) {
+        clearTimeout(dropdownTimeoutRef.current)
+      }
+    }
   }, [pathname])
 
   const toggleMobileMenu = () => {
@@ -38,6 +46,7 @@ export default function Navbar() {
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false)
+    setIsMobileEventDropdownOpen(false)
   }
 
   return (
@@ -84,22 +93,80 @@ export default function Navbar() {
         {/* Desktop Navigation Links */}
         <div className="hidden md:flex items-center gap-4 lg:gap-6 xl:gap-8">
           <Link href="/" className={`px-4 py-2 font-normal hover:bg-white/10 transition-colors text-sm lg:text-base ${
-            pathname === '/' ? 'border border-white rounded-full text-white' : 'text-white'
+            pathname === '/' ? 'underline decoration-2 underline-offset-4 text-white' : 'text-white'
           }`}>
             Home
           </Link>
           <Link href="/services" className={`px-4 py-2 font-normal hover:bg-white/10 transition-colors text-sm lg:text-base ${
-            pathname === '/services' ? 'border border-white rounded-full text-white' : 'text-white'
+            pathname === '/services' ? 'underline decoration-2 underline-offset-4 text-white' : 'text-white'
           }`}>
             Services
           </Link>
-          <Link href="/concerts" className={`px-4 py-2 font-normal hover:bg-white/10 transition-colors text-sm lg:text-base ${
-            pathname === '/concerts' ? 'border border-white rounded-full text-white' : 'text-white'
-          }`}>
-            Concerts
-          </Link>
+          {/* Event Dropdown */}
+          <div 
+            className="relative"
+            onMouseEnter={() => {
+              if (dropdownTimeoutRef.current) {
+                clearTimeout(dropdownTimeoutRef.current)
+              }
+              setIsEventDropdownOpen(true)
+            }}
+            onMouseLeave={() => {
+              dropdownTimeoutRef.current = setTimeout(() => {
+                setIsEventDropdownOpen(false)
+              }, 200) // 200ms delay before closing
+            }}
+          >
+            <button
+              className={`px-4 py-2 font-normal hover:bg-white/10 transition-colors text-sm lg:text-base flex items-center gap-1 ${
+                pathname === '/concerts' || pathname === '/charity-events' ? 'underline decoration-2 underline-offset-4 text-white' : 'text-white'
+              }`}
+            >
+              Event
+              <svg 
+                className={`w-4 h-4 transition-transform ${isEventDropdownOpen ? 'rotate-180' : ''}`} 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {isEventDropdownOpen && (
+              <div 
+                className="absolute top-full left-0 mt-1 bg-black/95 backdrop-blur-md shadow-lg rounded-lg overflow-hidden min-w-[180px] z-50"
+                onMouseEnter={() => {
+                  if (dropdownTimeoutRef.current) {
+                    clearTimeout(dropdownTimeoutRef.current)
+                  }
+                }}
+                onMouseLeave={() => {
+                  dropdownTimeoutRef.current = setTimeout(() => {
+                    setIsEventDropdownOpen(false)
+                  }, 200)
+                }}
+              >
+                <Link 
+                  href="/concerts" 
+                  className={`block px-4 py-2 text-sm text-white hover:bg-white/10 transition-colors ${
+                    pathname === '/concerts' ? 'bg-white/10' : ''
+                  }`}
+                >
+                  Concerts
+                </Link>
+                <Link 
+                  href="/charity-events" 
+                  className={`block px-4 py-2 text-sm text-white hover:bg-white/10 transition-colors ${
+                    pathname === '/charity-events' ? 'bg-white/10' : ''
+                  }`}
+                >
+                  Charity Events
+                </Link>
+              </div>
+            )}
+          </div>
           <Link href="/about" className={`px-4 py-2 font-normal hover:bg-white/10 transition-colors text-sm lg:text-base ${
-            pathname === '/about' ? 'border border-white rounded-full text-white' : 'text-white'
+            pathname === '/about' ? 'underline decoration-2 underline-offset-4 text-white' : 'text-white'
           }`}>
             About us
           </Link>
@@ -128,10 +195,10 @@ export default function Navbar() {
         </div>
         
         {/* Mobile Menu Button */}
-        <div className="md:hidden relative z-10">
+        <div className="md:hidden relative z-[100]">
           <button 
             onClick={toggleMobileMenu}
-            className="text-white z-50"
+            className="text-white relative z-[100] p-2"
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? (
@@ -149,19 +216,41 @@ export default function Navbar() {
       </nav>
 
       {/* Mobile Sidebar Menu */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-[70] md:hidden bg-black/50"
+          onClick={closeMobileMenu}
+        />
+      )}
       <div
-        className={`fixed inset-0 z-40 md:hidden transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-0 z-[80] md:hidden pointer-events-none transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Sidebar */}
-        <div className="absolute left-0 top-0 h-full w-64 bg-black/95 backdrop-blur-md shadow-2xl flex flex-col">
-          <div className="flex flex-col p-6 pt-20 flex-1">
+        <div 
+          className="absolute left-0 top-0 h-full w-64 bg-black/95 backdrop-blur-md shadow-2xl flex flex-col pointer-events-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Logo at top */}
+          <div className="flex justify-center items-center p-6 pt-8 pb-4">
+            <Link href="/" onClick={closeMobileMenu}>
+              <Image
+                src="/DS Events Logo without BG.png"
+                alt="DS Events & Shows"
+                width={120}
+                height={60}
+                className="h-auto w-auto"
+                priority
+              />
+            </Link>
+          </div>
+          <div className="flex flex-col p-6 pt-4 flex-1">
             <Link 
               href="/" 
               onClick={closeMobileMenu}
-              className={`px-4 py-3 mb-2 border border-white rounded-full font-normal hover:bg-white/10 transition-colors text-base text-center ${
-                pathname === '/' ? 'bg-white/20 text-white' : 'text-white'
+              className={`px-4 py-3 mb-2 font-normal hover:bg-white/10 transition-colors text-base text-center text-white ${
+                pathname === '/' ? 'border border-white' : 'border border-transparent'
               }`}
             >
               Home
@@ -169,26 +258,58 @@ export default function Navbar() {
             <Link 
               href="/services" 
               onClick={closeMobileMenu}
-              className={`px-4 py-3 mb-2 font-normal hover:bg-white/10 transition-colors text-base text-center rounded-lg ${
-                pathname === '/services' ? 'bg-white/20 text-white font-semibold' : 'text-white'
+              className={`px-4 py-3 mb-2 font-normal hover:bg-white/10 transition-colors text-base text-center text-white ${
+                pathname === '/services' ? 'border border-white' : 'border border-transparent'
               }`}
             >
               Services
             </Link>
-            <Link 
-              href="/concerts" 
-              onClick={closeMobileMenu}
-              className={`px-4 py-3 mb-2 font-normal hover:bg-white/10 transition-colors text-base text-center rounded-lg ${
-                pathname === '/concerts' ? 'bg-white/20 text-white font-semibold' : 'text-white'
-              }`}
-            >
-              Concerts
-            </Link>
+            {/* Mobile Event Dropdown */}
+            <div className="mb-2">
+              <button
+                onClick={() => setIsMobileEventDropdownOpen(!isMobileEventDropdownOpen)}
+                className={`w-full px-4 py-3 font-normal hover:bg-white/10 transition-colors text-base text-center text-white flex items-center justify-center gap-2 ${
+                  pathname === '/concerts' || pathname === '/charity-events' ? 'border border-white' : 'border border-transparent'
+                }`}
+              >
+                Event
+                <svg 
+                  className={`w-4 h-4 transition-transform ${isMobileEventDropdownOpen ? 'rotate-180' : ''}`} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {isMobileEventDropdownOpen && (
+                <div className="pl-4 mt-1">
+                  <Link 
+                    href="/concerts" 
+                    onClick={closeMobileMenu}
+                    className={`block px-4 py-2 mb-1 font-normal hover:bg-white/10 transition-colors text-sm text-left text-white ${
+                      pathname === '/concerts' ? 'bg-white/10 border border-white' : 'border border-transparent'
+                    }`}
+                  >
+                    Concerts
+                  </Link>
+                  <Link 
+                    href="/charity-events" 
+                    onClick={closeMobileMenu}
+                    className={`block px-4 py-2 mb-1 font-normal hover:bg-white/10 transition-colors text-sm text-left text-white ${
+                      pathname === '/charity-events' ? 'bg-white/10 border border-white' : 'border border-transparent'
+                    }`}
+                  >
+                    Charity Events
+                  </Link>
+                </div>
+              )}
+            </div>
             <Link 
               href="/about" 
               onClick={closeMobileMenu}
-              className={`px-4 py-3 mb-2 font-normal hover:bg-white/10 transition-colors text-base text-center rounded-lg ${
-                pathname === '/about' ? 'bg-white/20 text-white font-semibold' : 'text-white'
+              className={`px-4 py-3 mb-2 font-normal hover:bg-white/10 transition-colors text-base text-center text-white ${
+                pathname === '/about' ? 'border border-white' : 'border border-transparent'
               }`}
             >
               About us
@@ -214,10 +335,23 @@ export default function Navbar() {
                 }
                 // If not on homepage, let Link handle navigation to /#contacts
               }}
-              className="px-4 py-3 mb-2 text-white font-normal hover:bg-white/10 transition-colors text-base text-center rounded-lg cursor-pointer"
+              className="px-4 py-3 mb-2 text-white font-normal hover:bg-white/10 transition-colors text-base text-center cursor-pointer border border-transparent"
             >
               Contacts
             </Link>
+          </div>
+          
+          {/* Developed By Section */}
+          <div className="flex flex-col items-center gap-2 px-6 pb-4">
+            <p className="text-white/90 text-xs font-medium">Developed by:</p>
+            <Image
+              src="/dev.png"
+              alt="Developer"
+              width={50}
+              height={30}
+              className="h-auto w-auto opacity-95"
+              priority={false}
+            />
           </div>
           
           {/* Copyright */}

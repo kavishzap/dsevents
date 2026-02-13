@@ -77,12 +77,12 @@ export default function ContactsSection() {
                     Contact Us:
                 </h2>
 
-                {/* Contact Names Row */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-6 md:mb-8">
-                    <h4 className="text-2xl md:text-3xl font-bold text-gray-900">
+                {/* Contact Names Row - Desktop Only */}
+                <div className="hidden md:grid md:grid-cols-2 gap-4 md:gap-8 mb-6 md:mb-8">
+                    <h4 className="text-3xl font-bold text-gray-900">
                         Mr DIVESH BHIKEEA <span className="text-red-600">| CEO</span>
                     </h4>
-                    <h4 className="text-2xl md:text-3xl font-bold text-gray-900">
+                    <h4 className="text-3xl font-bold text-gray-900">
                         Mr SHANAND BHIKEEA <span className="text-red-600">| DIRECTOR</span>
                     </h4>
                 </div>
@@ -92,6 +92,10 @@ export default function ContactsSection() {
                     {/* Mr. DIVESH BHIKEEA | CEO */}
                     <div className="flex flex-col md:flex-row gap-6">
                         <div className="w-full md:w-64 flex-shrink-0">
+                            {/* Name - Mobile Only */}
+                            <h4 className="text-xl font-bold text-gray-900 mb-4 md:hidden">
+                                Mr DIVESH BHIKEEA <span className="text-red-600">| CEO</span>
+                            </h4>
                             <div className="relative w-full" style={{ paddingBottom: '160%' }}>
                                 <Image
                                     src="/assets/contact/test.png"
@@ -137,6 +141,10 @@ export default function ContactsSection() {
                     {/* Mr. SHANAND BHIKEEA | DIRECTOR */}
                     <div className="flex flex-col md:flex-row gap-6">
                         <div className="w-full md:w-64 flex-shrink-0">
+                            {/* Name - Mobile Only */}
+                            <h4 className="text-xl font-bold text-gray-900 mb-4 md:hidden">
+                                Mr SHANAND BHIKEEA <span className="text-red-600">| DIRECTOR</span>
+                            </h4>
                             <div className="relative w-full" style={{ paddingBottom: '160%' }}>
                                 <Image
                                     src="/assets/contact/image.png"

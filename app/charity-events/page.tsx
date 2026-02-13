@@ -6,12 +6,12 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import ScrollToTop from '@/components/ScrollToTop'
 
-export default function ConcertsPage() {
+export default function CharityEventsPage() {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
 
-  const aboutEventText = "At <span class=\"font-bold\">DS Events</span>, we bring life to your celebrations with our top-tier DJ services, ensuring that every event is filled with the perfect beats, seamless transitions, and an electric atmosphere. Whether you're hosting a <span class=\"font-bold\">birthday party, engagement ceremony, wedding reception, corporate event, or any other special gathering</span>, our skilled DJs are here to make it unforgettable."
+  const charityEventText = "At <span class=\"font-bold\">DS Events</span>, we elevate charity fund-raising events with the right ambience, energy, and execution. From inspiring moments to seamless flow, we help create events that connect people and drive meaningful impact."
 
   return (
     <>
@@ -22,7 +22,7 @@ export default function ConcertsPage() {
           {/* Title */}
           <div className="mb-6 md:mb-8">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold">
-              <span className="text-red-600">BOLLYWOOD DHAMAKA</span>
+              <span className="text-red-600">CHRISTMAS JAM</span>
             </h1>
           </div>
 
@@ -32,8 +32,8 @@ export default function ConcertsPage() {
             <div className="w-full lg:col-span-4 relative h-[300px] md:h-[500px] lg:h-auto rounded-lg overflow-hidden order-1 lg:order-1">
               <div className="relative w-full">
                 <Image
-                  src="/assets/shane/dhamaka.png"
-                  alt="Bollywood Dhamaka"
+                  src="/assets/shane/chri.png"
+                  alt="Christmas Jam"
                   width={0}
                   height={0}
                   sizes="(max-width: 1024px) 100vw, 80vw"
@@ -46,12 +46,12 @@ export default function ConcertsPage() {
             {/* About Event Section - Right Side (1/5 width) */}
             <div className="w-full lg:col-span-1 flex flex-col justify-center order-2 lg:order-2 px-4 md:px-0">
               <h2 className="text-2xl md:text-3xl font-bold text-red-600 mb-4 md:mb-6">
-                About Event
+                Charity Fund Raising Event
               </h2>
               <div className="flex-1">
                 <p
-                  className="text-gray-700 text-base md:text-lg leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: aboutEventText }}
+                  className="text-gray-700 text-base md:text-lg lg:text-xl leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: charityEventText }}
                 />
               </div>
             </div>

@@ -6,14 +6,14 @@ import Link from 'next/link'
 import { useScrollFade } from '@/hooks/useParallax'
 import { motion, AnimatePresence } from 'framer-motion'
 
-export default function ConcertsSection() {
+export default function EventsSection() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
   
-  // Initial concerts data
-  const initialConcerts = [
+  // Initial events data
+  const initialEvents = [
     { 
       id: 1,
       image: '/assets/concerts/IMG_5149.JPG.jpeg',
@@ -41,7 +41,7 @@ export default function ConcertsSection() {
     },
   ]
 
-  const [concerts, setConcerts] = useState(initialConcerts)
+  const [events, setEvents] = useState(initialEvents)
   const [isSliding, setIsSliding] = useState(false)
   const centerIndex = 2 // Third item (0-indexed)
 
@@ -61,7 +61,7 @@ export default function ConcertsSection() {
     const isLeftSwipe = distance > 50
     const isRightSwipe = distance < -50
 
-    if (isLeftSwipe && currentSlide < concerts.length - 1) {
+    if (isLeftSwipe && currentSlide < events.length - 1) {
       setCurrentSlide(currentSlide + 1)
     }
     if (isRightSwipe && currentSlide > 0) {
@@ -75,11 +75,11 @@ export default function ConcertsSection() {
   }
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev === concerts.length - 1 ? 0 : prev + 1))
+    setCurrentSlide((prev) => (prev === events.length - 1 ? 0 : prev + 1))
   }
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? concerts.length - 1 : prev - 1))
+    setCurrentSlide((prev) => (prev === 0 ? events.length - 1 : prev - 1))
   }
 
   // Auto-shuffling animation with smooth framer-motion transitions (desktop only - md and above)
@@ -97,14 +97,14 @@ export default function ConcertsSection() {
           
           // Smooth transition with framer-motion
           setTimeout(() => {
-            setConcerts((prevConcerts) => {
+            setEvents((prevEvents) => {
               // Rotate array: move first item to the end
-              const newConcerts = [...prevConcerts]
-              const firstItem = newConcerts.shift()
+              const newEvents = [...prevEvents]
+              const firstItem = newEvents.shift()
               if (firstItem) {
-                newConcerts.push(firstItem)
+                newEvents.push(firstItem)
               }
-              return newConcerts
+              return newEvents
             })
             setIsSliding(false)
           }, 600) // Slightly longer for smoother animation
@@ -132,7 +132,7 @@ export default function ConcertsSection() {
       // Only run on mobile (below 768px)
       if (window.innerWidth < 768) {
         interval = setInterval(() => {
-          setCurrentSlide((prev) => (prev === concerts.length - 1 ? 0 : prev + 1))
+          setCurrentSlide((prev) => (prev === events.length - 1 ? 0 : prev + 1))
         }, 4000) // Change slide every 4 seconds on mobile
       }
     }
@@ -144,7 +144,7 @@ export default function ConcertsSection() {
       if (interval) clearInterval(interval)
       window.removeEventListener('resize', setupMobileCarousel)
     }
-  }, [concerts.length])
+  }, [events.length])
 
   const [setSectionRef, isSectionVisible] = useScrollFade()
 
@@ -215,10 +215,7 @@ export default function ConcertsSection() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold text-red-800 mb-3 md:mb-4">
-          What do we provide as an entertainment company?
-        </h2>
-        <h3 className="text-xl md:text-2xl font-bold text-gray-700 mb-6 md:mb-8 drop-shadow-sm">Concerts:</h3>
+        <h3 className="text-xl md:text-2xl font-bold text-gray-700 mb-6 md:mb-8 drop-shadow-sm">Events:</h3>
         
         {/* Mobile Carousel */}
         <div className="md:hidden relative">
@@ -249,8 +246,8 @@ export default function ConcertsSection() {
                 >
                   <div className="relative w-full" style={{ paddingBottom: '150%' }}>
                     <Image
-                      src={concerts[currentSlide].image}
-                      alt={concerts[currentSlide].title}
+                      src={events[currentSlide].image}
+                      alt={events[currentSlide].title}
                       fill
                       className="object-cover object-center"
                       sizes="100vw"
@@ -263,7 +260,7 @@ export default function ConcertsSection() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  {concerts[currentSlide].title}
+                  {events[currentSlide].title}
                 </motion.p>
               </motion.div>
             </AnimatePresence>
@@ -271,7 +268,7 @@ export default function ConcertsSection() {
           
           {/* Navigation Dots */}
           <div className="flex justify-center gap-2 mt-4">
-            {concerts.map((_, index) => (
+            {events.map((_, index) => (
               <motion.button
                 key={index}
                 onClick={() => goToSlide(index)}
@@ -291,14 +288,14 @@ export default function ConcertsSection() {
 
         {/* Desktop Grid */}
         <div className="hidden md:grid grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
-          {concerts.map((concert, index) => {
+          {events.map((event, index) => {
             const isCenter = index === centerIndex
             const isHovered = hoveredIndex === index
             const showOverlay = !isCenter && !isHovered
             
             return (
               <motion.div
-                key={concert.id}
+                key={event.id}
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ 
@@ -338,8 +335,8 @@ export default function ConcertsSection() {
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   >
                     <Image
-                      src={concert.image}
-                      alt={concert.title}
+                      src={event.image}
+                      alt={event.title}
                       fill
                       className="object-cover object-center"
                       sizes="(max-width: 768px) 33vw, 20vw"
@@ -376,16 +373,16 @@ export default function ConcertsSection() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: index * 0.05 + 0.2 }}
                 >
-                  {concert.title}
+                  {event.title}
                 </motion.p>
               </motion.div>
             )
           })}
         </div>
 
-        {/* UPCOMING CONCERTS Button */}
+        {/* Explore More Button */}
         <div className="flex justify-center mt-12 md:mt-16">
-          <Link href="/concerts" className="flex items-center gap-2 text-rose-700 hover:text-rose-800 transition-colors duration-300 underline decoration-2 underline-offset-4">
+          <Link href="/charity-events" className="flex items-center gap-2 text-rose-700 hover:text-rose-800 transition-colors duration-300 underline decoration-2 underline-offset-4">
             <span className="text-sm md:text-base font-medium uppercase tracking-wide">
               Explore More
             </span>

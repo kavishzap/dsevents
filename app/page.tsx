@@ -90,9 +90,9 @@ export default function Home() {
 
         {/* Search Bar */}
         <div className="relative w-full flex justify-center">
-          <div className="flex items-center rounded-full bg-black/20 backdrop-blur-md px-6 py-4 shadow-2xl max-w-sm">
+          <div className="group flex items-center rounded-full bg-black/20 backdrop-blur-md px-6 py-4 shadow-2xl max-w-sm cursor-pointer transition-all duration-300">
             <svg
-              className="mr-4 h-6 w-6 text-white flex-shrink-0"
+              className="mr-4 h-6 w-6 text-white flex-shrink-0 transition-all duration-300 group-hover:scale-125 group-hover:text-red-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -105,16 +105,8 @@ export default function Home() {
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
-            <span className="text-white text-lg font-light uppercase tracking-[0.3em]">
-              {'SHOWTIME'.split('').map((char, index) => (
-                <span
-                  key={index}
-                  className="animate-bounce-letter inline-block"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  {char}
-                </span>
-              ))}
+            <span className="text-white text-lg font-light uppercase tracking-[0.3em] transition-all duration-300 group-hover:scale-110 group-hover:text-red-400 group-hover:tracking-[0.4em]">
+              SHOWTIME
             </span>
           </div>
         </div>
