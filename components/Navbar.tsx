@@ -192,6 +192,11 @@ export default function Navbar() {
           >
             Contacts
           </Link>
+          <Link href="/reservations" className={`px-4 py-2 font-normal hover:bg-white/10 transition-colors text-sm lg:text-base ${
+            pathname === '/reservations' ? 'underline decoration-2 underline-offset-4 text-white' : 'text-white'
+          }`}>
+            Reservations
+          </Link>
         </div>
         
         {/* Mobile Menu Button */}
@@ -338,6 +343,15 @@ export default function Navbar() {
               className="px-4 py-3 mb-2 text-white font-normal hover:bg-white/10 transition-colors text-base text-center cursor-pointer border border-transparent"
             >
               Contacts
+            </Link>
+            <Link 
+              href="/reservations" 
+              onClick={closeMobileMenu}
+              className={`px-4 py-3 mb-2 font-normal hover:bg-white/10 transition-colors text-base text-center text-white ${
+                pathname === '/reservations' ? 'border border-white' : 'border border-transparent'
+              }`}
+            >
+              Reservations
             </Link>
           </div>
           

@@ -206,5 +206,107 @@
   .stagger-5 { animation-delay: 0.5s; }
 }
 
+/* React Calendar Custom Styles */
+.react-calendar {
+  width: 100% !important;
+  border: none !important;
+  font-family: inherit !important;
+  background: white !important;
+}
+
+.react-calendar__navigation {
+  display: flex;
+  height: 44px;
+  margin-bottom: 1em;
+  background: #dc2626;
+  border-radius: 8px 8px 0 0;
+}
+
+.react-calendar__navigation button {
+  min-width: 44px;
+  background: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.react-calendar__navigation button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.react-calendar__navigation button:disabled {
+  background-color: transparent;
+  opacity: 0.5;
+}
+
+.react-calendar__month-view__weekdays {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 0.75em;
+  color: #dc2626;
+  padding: 0.5em 0;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  padding: 0.5em;
+}
+
+.react-calendar__month-view__days {
+  gap: 4px;
+}
+
+.react-calendar__tile {
+  max-width: 100%;
+  padding: 0.75em 0.5em;
+  background: none;
+  text-align: center;
+  line-height: 16px;
+  font-size: 0.833em;
+  border-radius: 8px;
+  transition: all 0.2s;
+  color: #374151;
+}
+
+.react-calendar__tile:enabled:hover {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.react-calendar__tile:enabled:focus {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.react-calendar__tile--now {
+  background: #fef2f2;
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.react-calendar__tile--now:enabled:hover {
+  background: #fee2e2;
+}
+
+.react-calendar__tile--active {
+  background: #dc2626 !important;
+  color: white !important;
+  font-weight: 700;
+}
+
+.react-calendar__tile--active:enabled:hover {
+  background: #b91c1c !important;
+}
+
+.react-calendar__tile--disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
 
 
